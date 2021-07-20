@@ -159,7 +159,7 @@ func (s *Store) CACheckAndSetConfig(idx, cidx uint64, config *structs.CAConfigur
 	// return early here.
 	e, ok := existing.(*structs.CAConfiguration)
 	if (ok && e.ModifyIndex != cidx) || (!ok && cidx != 0) {
-		return errors.Errorf("invalid index")
+		return errors.Errorf("CAS failure: ModifyIndex did not match existing")
 	}
 
 	if err := s.caSetConfigTxn(idx, tx, config); err != nil {
