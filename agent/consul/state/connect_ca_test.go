@@ -4,6 +4,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/hashicorp/consul/sdk/testutil"
+
 	"github.com/hashicorp/go-memdb"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -56,12 +58,10 @@ func TestStore_CAConfigCAS(t *testing.T) {
 	}
 
 	// Do a CAS with an index lower than the entry
-	ok, err := s.CACheckAndSetConfig(2, 0, &structs.CAConfiguration{
+	err := s.CACheckAndSetConfig(2, 0, &structs.CAConfiguration{
 		Provider: "static",
 	})
-	if ok || err == nil {
-		t.Fatalf("expected (false, \"invalid index\"), got: (%v, %#v)", ok, err)
-	}
+	testutil.RequireErrorContains(t, err, "ModifyIndex did not match existing")
 
 	// Check that the index is untouched and the entry
 	// has not been updated.
@@ -77,11 +77,11 @@ func TestStore_CAConfigCAS(t *testing.T) {
 	}
 
 	// Do another CAS, this time with the correct index
-	ok, err = s.CACheckAndSetConfig(2, 1, &structs.CAConfiguration{
+	err = s.CACheckAndSetConfig(2, 1, &structs.CAConfiguration{
 		Provider: "static",
 	})
-	if !ok || err != nil {
-		t.Fatalf("expected (true, nil), got: (%v, %#v)", ok, err)
+	if err != nil {
+		t.Fatalf("expected (true, nil), got: (%#v)", err)
 	}
 
 	// Make sure the config was updated
