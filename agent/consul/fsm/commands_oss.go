@@ -457,7 +457,7 @@ func (c *FSM) applyConnectCAOperation(buf []byte, index uint64) interface{} {
 			return act
 		}
 
-		return c.state.CACheckAndSetConfig(index+1, req.Index, req.Config)
+		return c.state.CASetConfig(index, req.Config)
 
 	case structs.CAOpIncrementProviderSerialNumber:
 		sn, err := c.state.CAIncrementProviderSerialNumber(index)
