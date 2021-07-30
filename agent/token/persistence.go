@@ -70,7 +70,7 @@ func (t *Store) WithPersistenceLock(f func() error) error {
 
 type persistedTokens struct {
 	Replication string `json:"replication,omitempty"`
-	AgentRoot   string `json:"agent_master,omitempty"`
+	AgentRoot   string `json:"agent_root,omitempty"`
 	Default     string `json:"default,omitempty"`
 	Agent       string `json:"agent,omitempty"`
 }
@@ -114,7 +114,7 @@ func loadTokens(s *Store, cfg Config, tokens persistedTokens, logger Logger) {
 		s.UpdateAgentRootToken(tokens.AgentRoot, TokenSourceAPI)
 
 		if cfg.ACLAgentRootToken != "" {
-			logger.Warn("\"agent_master\" token present in both the configuration and persisted token store, using the persisted token")
+			logger.Warn("\"agent_root\" token present in both the configuration and persisted token store, using the persisted token")
 		}
 	} else {
 		s.UpdateAgentRootToken(cfg.ACLAgentRootToken, TokenSourceConfig)

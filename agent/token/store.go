@@ -188,7 +188,7 @@ func (t *Store) UpdateAgentToken(token string, source TokenSource) bool {
 	return changed
 }
 
-// UpdateAgentRootToken replaces the current agent master token in the store.
+// UpdateAgentRootToken replaces the current agent root token in the store.
 // Returns true if it was changed.
 func (t *Store) UpdateAgentRootToken(token string, source TokenSource) bool {
 	t.l.Lock()
@@ -285,7 +285,7 @@ func (t *Store) ReplicationTokenAndSource() (string, TokenSource) {
 	return t.replicationToken, t.replicationTokenSource
 }
 
-// IsAgentRootToken checks to see if a given token is the agent master token.
+// IsAgentRootToken checks to see if a given token is the agent root token.
 // This will never match an empty token for safety.
 func (t *Store) IsAgentRootToken(token string) bool {
 	t.l.RLock()

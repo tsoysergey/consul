@@ -12,8 +12,8 @@ func TestStore_RegularTokens(t *testing.T) {
 		user         string
 		agent        string
 		agentSource  TokenSource
-		master       string
-		masterSource TokenSource
+		root         string
+		rootSource TokenSource
 		repl         string
 		replSource   TokenSource
 	}
@@ -67,22 +67,22 @@ func TestStore_RegularTokens(t *testing.T) {
 			effective: tokens{repl: "R"},
 		},
 		{
-			name:      "set master - config",
-			set:       tokens{master: "M", masterSource: TokenSourceConfig},
-			raw:       tokens{master: "M", masterSource: TokenSourceConfig},
-			effective: tokens{master: "M"},
+			name:      "set root - config",
+			set:       tokens{root: "M", rootSource: TokenSourceConfig},
+			raw:       tokens{root: "M", rootSource: TokenSourceConfig},
+			effective: tokens{root: "M"},
 		},
 		{
-			name:      "set master - api",
-			set:       tokens{master: "M", masterSource: TokenSourceAPI},
-			raw:       tokens{master: "M", masterSource: TokenSourceAPI},
-			effective: tokens{master: "M"},
+			name:      "set root - api",
+			set:       tokens{root: "M", rootSource: TokenSourceAPI},
+			raw:       tokens{root: "M", rootSource: TokenSourceAPI},
+			effective: tokens{root: "M"},
 		},
 		{
 			name:      "set all",
-			set:       tokens{user: "U", agent: "A", repl: "R", master: "M"},
-			raw:       tokens{user: "U", agent: "A", repl: "R", master: "M"},
-			effective: tokens{user: "U", agent: "A", repl: "R", master: "M"},
+			set:       tokens{user: "U", agent: "A", repl: "R", root: "M"},
+			raw:       tokens{user: "U", agent: "A", repl: "R", root: "M"},
+			effective: tokens{user: "U", agent: "A", repl: "R", root: "M"},
 		},
 	}
 	for _, tt := range tests {
@@ -100,19 +100,19 @@ func TestStore_RegularTokens(t *testing.T) {
 				require.True(t, s.UpdateReplicationToken(tt.set.repl, tt.set.replSource))
 			}
 
-			if tt.set.master != "" {
-				require.True(t, s.UpdateAgentRootToken(tt.set.master, tt.set.masterSource))
+			if tt.set.root != "" {
+				require.True(t, s.UpdateAgentRootToken(tt.set.root, tt.set.rootSource))
 			}
 
 			// If they don't change then they return false.
 			require.False(t, s.UpdateUserToken(tt.set.user, tt.set.userSource))
 			require.False(t, s.UpdateAgentToken(tt.set.agent, tt.set.agentSource))
 			require.False(t, s.UpdateReplicationToken(tt.set.repl, tt.set.replSource))
-			require.False(t, s.UpdateAgentRootToken(tt.set.master, tt.set.masterSource))
+			require.False(t, s.UpdateAgentRootToken(tt.set.root, tt.set.rootSource))
 
 			require.Equal(t, tt.effective.user, s.UserToken())
 			require.Equal(t, tt.effective.agent, s.AgentToken())
-			require.Equal(t, tt.effective.master, s.AgentRootToken())
+			require.Equal(t, tt.effective.root, s.AgentRootToken())
 			require.Equal(t, tt.effective.repl, s.ReplicationToken())
 
 			tok, src := s.UserTokenAndSource()
@@ -124,8 +124,8 @@ func TestStore_RegularTokens(t *testing.T) {
 			require.Equal(t, tt.raw.agentSource, src)
 
 			tok, src = s.AgentRootTokenAndSource()
-			require.Equal(t, tt.raw.master, tok)
-			require.Equal(t, tt.raw.masterSource, src)
+			require.Equal(t, tt.raw.root, tok)
+			require.Equal(t, tt.raw.rootSource, src)
 
 			tok, src = s.ReplicationTokenAndSource()
 			require.Equal(t, tt.raw.repl, tok)
@@ -145,16 +145,16 @@ func TestStore_AgentRootToken(t *testing.T) {
 
 	verify(false, "", "nope")
 
-	s.UpdateAgentRootToken("master", TokenSourceConfig)
-	verify(true, "master")
+	s.UpdateAgentRootToken("root", TokenSourceConfig)
+	verify(true, "root")
 	verify(false, "", "nope")
 
 	s.UpdateAgentRootToken("another", TokenSourceConfig)
 	verify(true, "another")
-	verify(false, "", "nope", "master")
+	verify(false, "", "nope", "root")
 
 	s.UpdateAgentRootToken("", TokenSourceConfig)
-	verify(false, "", "nope", "master", "another")
+	verify(false, "", "nope", "root", "another")
 }
 
 func TestStore_Notify(t *testing.T) {
@@ -205,7 +205,7 @@ func TestStore_Notify(t *testing.T) {
 	requireNotNotified(t, agentRootNotifier.Ch)
 	requireNotNotified(t, replicationNotifier2.Ch)
 
-	// now update the agent master token which should send notificaitons to the agent master and all notifier
+	// now update the agent root token which should send notificaitons to the agent root and all notifier
 	require.True(t, s.UpdateAgentRootToken("789badc8-f850-43e1-8742-9b9f484957cc", TokenSourceAPI))
 
 	requireNotNotified(t, agentNotifier.Ch)
