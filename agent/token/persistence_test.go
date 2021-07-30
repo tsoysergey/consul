@@ -20,7 +20,7 @@ func TestStore_Load(t *testing.T) {
 		cfg := Config{
 			DataDir:             dataDir,
 			ACLAgentToken:       "alfa",
-			ACLAgentRootToken: "bravo",
+			ACLAgentRootToken:   "bravo",
 			ACLDefaultToken:     "charlie",
 			ACLReplicationToken: "delta",
 		}
@@ -36,7 +36,7 @@ func TestStore_Load(t *testing.T) {
 			DataDir:             dataDir,
 			ACLDefaultToken:     "echo",
 			ACLAgentToken:       "foxtrot",
-			ACLAgentRootToken: "golf",
+			ACLAgentRootToken:   "golf",
 			ACLReplicationToken: "hotel",
 		}
 		// ensures no error for missing persisted tokens file
@@ -52,7 +52,7 @@ func TestStore_Load(t *testing.T) {
 			DataDir:             dataDir,
 			ACLDefaultToken:     "echo",
 			ACLAgentToken:       "foxtrot",
-			ACLAgentRootToken: "golf",
+			ACLAgentRootToken:   "golf",
 			ACLReplicationToken: "hotel",
 		}
 
@@ -97,7 +97,7 @@ func TestStore_Load(t *testing.T) {
 			DataDir:             dataDir,
 			ACLDefaultToken:     "quebec",
 			ACLAgentToken:       "romeo",
-			ACLAgentRootToken: "sierra",
+			ACLAgentRootToken:   "sierra",
 			ACLReplicationToken: "tango",
 		}
 
@@ -121,7 +121,7 @@ func TestStore_Load(t *testing.T) {
 			DataDir:             dataDir,
 			ACLDefaultToken:     "whiskey",
 			ACLAgentToken:       "xray",
-			ACLAgentRootToken: "yankee",
+			ACLAgentRootToken:   "yankee",
 			ACLReplicationToken: "zulu",
 		}
 
@@ -140,7 +140,7 @@ func TestStore_Load(t *testing.T) {
 			DataDir:             dataDir,
 			ACLDefaultToken:     "one",
 			ACLAgentToken:       "two",
-			ACLAgentRootToken: "three",
+			ACLAgentRootToken:   "three",
 			ACLReplicationToken: "four",
 		}
 
@@ -161,7 +161,7 @@ func TestStore_Load(t *testing.T) {
 			DataDir:             dataDir,
 			ACLDefaultToken:     "alfa",
 			ACLAgentToken:       "bravo",
-			ACLAgentRootToken: "charlie",
+			ACLAgentRootToken:   "charlie",
 			ACLReplicationToken: "foxtrot",
 		}
 
@@ -185,7 +185,7 @@ func TestStore_WithPersistenceLock(t *testing.T) {
 		DataDir:             dataDir,
 		ACLDefaultToken:     "default-token",
 		ACLAgentToken:       "agent-token",
-		ACLAgentRootToken: "root-token",
+		ACLAgentRootToken:   "root-token",
 		ACLReplicationToken: "replication-token",
 	}
 	err := store.Load(cfg, hclog.New(nil))

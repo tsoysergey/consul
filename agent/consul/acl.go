@@ -325,14 +325,14 @@ func NewACLResolver(config *ACLResolverConfig) (*ACLResolver, error) {
 	}
 
 	return &ACLResolver{
-		config:           config.Config,
-		logger:           config.Logger.Named(logging.ACL),
-		delegate:         config.Delegate,
-		aclConf:          config.ACLConfig,
-		cache:            cache,
-		autoDisable:      config.AutoDisable,
-		down:             down,
-		tokens:           config.Tokens,
+		config:         config.Config,
+		logger:         config.Logger.Named(logging.ACL),
+		delegate:       config.Delegate,
+		aclConf:        config.ACLConfig,
+		cache:          cache,
+		autoDisable:    config.AutoDisable,
+		down:           down,
+		tokens:         config.Tokens,
 		agentRootAuthz: authz,
 	}, nil
 }

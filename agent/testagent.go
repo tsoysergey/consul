@@ -469,10 +469,10 @@ const (
 type TestACLConfigParams struct {
 	PrimaryDatacenter      string
 	DefaultPolicy          string
-	RootToken            string
+	RootToken              string
 	AgentToken             string
 	DefaultToken           string
-	AgentRootToken       string
+	AgentRootToken         string
 	ReplicationToken       string
 	EnableTokenReplication bool
 }
@@ -481,9 +481,9 @@ func DefaulTestACLConfigParams() *TestACLConfigParams {
 	return &TestACLConfigParams{
 		PrimaryDatacenter: "dc1",
 		DefaultPolicy:     "deny",
-		RootToken:       TestDefaultRootToken,
+		RootToken:         TestDefaultRootToken,
 		AgentToken:        TestDefaultRootToken,
-		AgentRootToken:  TestDefaultAgentRootToken,
+		AgentRootToken:    TestDefaultAgentRootToken,
 	}
 }
 
@@ -499,9 +499,9 @@ func TestACLConfigNew() string {
 	return TestACLConfigWithParams(&TestACLConfigParams{
 		PrimaryDatacenter: "dc1",
 		DefaultPolicy:     "deny",
-		RootToken:       "root",
+		RootToken:         "root",
 		AgentToken:        "root",
-		AgentRootToken:  "towel",
+		AgentRootToken:    "towel",
 	})
 }
 
