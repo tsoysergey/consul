@@ -450,7 +450,7 @@ func NewServer(config *Config, flat Deps) (*Server, error) {
 			ACLDownPolicy:    config.ACLDownPolicy,
 			ACLDefaultPolicy: config.ACLDefaultPolicy,
 		},
-		Delegate:    s,
+		Backend:     &serverACLResolverBackend{Server: s},
 		CacheConfig: serverACLCacheConfig,
 		AutoDisable: false,
 		Logger:      logger,

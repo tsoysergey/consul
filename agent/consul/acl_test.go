@@ -742,7 +742,7 @@ func newTestACLResolver(t *testing.T, delegate *ACLResolverTestDelegate, cb func
 			Roles:          4,
 		},
 		AutoDisable: true,
-		Delegate:    delegate,
+		Backend:     delegate,
 	}
 
 	if cb != nil {

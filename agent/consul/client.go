@@ -134,7 +134,7 @@ func NewClient(config *Config, deps Deps) (*Client, error) {
 			ACLDownPolicy:    config.ACLDownPolicy,
 			ACLDefaultPolicy: config.ACLDefaultPolicy,
 		},
-		Delegate:    c,
+		Backend:     &clientACLResolverBackend{Client: c},
 		Logger:      c.logger,
 		AutoDisable: true,
 		CacheConfig: clientACLCacheConfig,
