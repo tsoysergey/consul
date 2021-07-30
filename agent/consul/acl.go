@@ -257,10 +257,10 @@ type ACLResolver struct {
 	disabled     time.Time
 	disabledLock sync.RWMutex
 
-	agentMasterAuthz acl.Authorizer
+	agentRootAuthz acl.Authorizer
 }
 
-func agentMasterAuthorizer(nodeName string) (acl.Authorizer, error) {
+func agentRootAuthorizer(nodeName string) (acl.Authorizer, error) {
 	// Build a policy for the agent master token.
 	// The builtin agent master policy allows reading any node information
 	// and allows writes to the agent with the node name of the running agent
@@ -319,7 +319,7 @@ func NewACLResolver(config *ACLResolverConfig) (*ACLResolver, error) {
 		return nil, fmt.Errorf("invalid ACL down policy %q", config.Config.ACLDownPolicy)
 	}
 
-	authz, err := agentMasterAuthorizer(config.Config.NodeName)
+	authz, err := agentRootAuthorizer(config.Config.NodeName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize the agent master authorizer")
 	}
@@ -333,7 +333,7 @@ func NewACLResolver(config *ACLResolverConfig) (*ACLResolver, error) {
 		autoDisable:      config.AutoDisable,
 		down:             down,
 		tokens:           config.Tokens,
-		agentMasterAuthz: authz,
+		agentRootAuthz: authz,
 	}, nil
 }
 
@@ -1177,8 +1177,8 @@ func (r *ACLResolver) resolveLocallyManagedToken(token string) (structs.ACLIdent
 		return nil, nil, false
 	}
 
-	if r.tokens.IsAgentMasterToken(token) {
-		return structs.NewAgentMasterTokenIdentity(r.config.NodeName, token), r.agentMasterAuthz, true
+	if r.tokens.IsAgentRootToken(token) {
+		return structs.NewAgentRootTokenIdentity(r.config.NodeName, token), r.agentRootAuthz, true
 	}
 
 	return r.resolveLocallyManagedEnterpriseToken(token)

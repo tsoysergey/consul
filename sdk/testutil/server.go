@@ -85,7 +85,7 @@ type TestServerConfig struct {
 	Addresses           *TestAddressConfig     `json:"addresses,omitempty"`
 	Ports               *TestPortConfig        `json:"ports,omitempty"`
 	RaftProtocol        int                    `json:"raft_protocol,omitempty"`
-	ACLMasterToken      string                 `json:"acl_master_token,omitempty"`
+	ACLRootToken      string                 `json:"acl_master_token,omitempty"`
 	ACLDatacenter       string                 `json:"acl_datacenter,omitempty"`
 	PrimaryDatacenter   string                 `json:"primary_datacenter,omitempty"`
 	ACLDefaultPolicy    string                 `json:"acl_default_policy,omitempty"`
@@ -121,9 +121,9 @@ type TestACLs struct {
 }
 
 type TestTokens struct {
-	Master      string `json:"master,omitempty"`
+	Root      string `json:"master,omitempty"`
 	Replication string `json:"replication,omitempty"`
-	AgentMaster string `json:"agent_master,omitempty"`
+	AgentRoot string `json:"agent_master,omitempty"`
 	Default     string `json:"default,omitempty"`
 	Agent       string `json:"agent,omitempty"`
 }
@@ -528,8 +528,8 @@ func (s *TestServer) masterGet(url string) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	if s.Config.ACL.Tokens.Master != "" {
-		req.Header.Set("x-consul-token", s.Config.ACL.Tokens.Master)
+	if s.Config.ACL.Tokens.Root != "" {
+		req.Header.Set("x-consul-token", s.Config.ACL.Tokens.Root)
 	}
 	return s.HTTPClient.Do(req)
 }
@@ -539,8 +539,8 @@ func (s *TestServer) masterDelete(url string) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	if s.Config.ACL.Tokens.Master != "" {
-		req.Header.Set("x-consul-token", s.Config.ACL.Tokens.Master)
+	if s.Config.ACL.Tokens.Root != "" {
+		req.Header.Set("x-consul-token", s.Config.ACL.Tokens.Root)
 	}
 	return s.HTTPClient.Do(req)
 }

@@ -431,8 +431,8 @@ func (s *Server) initializeLegacyACL() error {
 	}
 
 	// Check for configured master token.
-	if master := s.config.ACLMasterToken; len(master) > 0 {
-		_, token, err = state.ACLTokenGetBySecret(nil, master, nil)
+	if root := s.config.ACLRootToken; len(root) > 0 {
+		_, token, err = state.ACLTokenGetBySecret(nil, root, nil)
 		if err != nil {
 			return fmt.Errorf("failed to get master token: %v", err)
 		}
@@ -442,8 +442,8 @@ func (s *Server) initializeLegacyACL() error {
 				Datacenter: authDC,
 				Op:         structs.ACLSet,
 				ACL: structs.ACL{
-					ID:   master,
-					Name: "Master Token",
+					ID:   root,
+					Name: "Root Token",
 					Type: structs.ACLTokenTypeManagement,
 				},
 			}
@@ -564,7 +564,7 @@ func (s *Server) initializeACLs(ctx context.Context, upgrade bool) error {
 		}
 
 		// Check for configured master token.
-		if master := s.config.ACLMasterToken; len(master) > 0 {
+		if master := s.config.ACLRootToken; len(master) > 0 {
 			state := s.fsm.State()
 			if _, err := uuid.ParseUUID(master); err != nil {
 				s.logger.Warn("Configuring a non-UUID master token is deprecated")
@@ -583,8 +583,8 @@ func (s *Server) initializeACLs(ctx context.Context, upgrade bool) error {
 
 				token := structs.ACLToken{
 					AccessorID:  accessor,
-					SecretID:    master,
-					Description: "Master Token",
+					SecretID:    root,
+					Description: "Root Token",
 					Policies: []structs.ACLTokenPolicyLink{
 						{
 							ID: structs.ACLPolicyGlobalManagementID,

@@ -1330,7 +1330,7 @@ func (s *HTTPHandlers) AgentToken(resp http.ResponseWriter, req *http.Request) (
 			}
 
 		case "acl_agent_master_token", "agent_master":
-			s.agent.tokens.UpdateAgentMasterToken(args.Token, token_store.TokenSourceAPI)
+			s.agent.tokens.UpdateAgentRootToken(args.Token, token_store.TokenSourceAPI)
 
 		case "acl_replication_token", "replication":
 			s.agent.tokens.UpdateReplicationToken(args.Token, token_store.TokenSourceAPI)

@@ -450,9 +450,9 @@ func (m *ACL) GetMSPDisableBootstrap() bool {
 }
 
 type ACLTokens struct {
-	Master                 string                     `protobuf:"bytes,1,opt,name=Master,proto3" json:"Master,omitempty"`
+	Root                   string                     `protobuf:"bytes,1,opt,name=Root,proto3" json:"Root,omitempty"`
 	Replication            string                     `protobuf:"bytes,2,opt,name=Replication,proto3" json:"Replication,omitempty"`
-	AgentMaster            string                     `protobuf:"bytes,3,opt,name=AgentMaster,proto3" json:"AgentMaster,omitempty"`
+	AgentRoot              string                     `protobuf:"bytes,3,opt,name=AgentRoot,proto3" json:"AgentRoot,omitempty"`
 	Default                string                     `protobuf:"bytes,4,opt,name=Default,proto3" json:"Default,omitempty"`
 	Agent                  string                     `protobuf:"bytes,5,opt,name=Agent,proto3" json:"Agent,omitempty"`
 	ManagedServiceProvider []*ACLServiceProviderToken `protobuf:"bytes,6,rep,name=ManagedServiceProvider,proto3" json:"ManagedServiceProvider,omitempty"`
@@ -494,9 +494,9 @@ func (m *ACLTokens) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ACLTokens proto.InternalMessageInfo
 
-func (m *ACLTokens) GetMaster() string {
+func (m *ACLTokens) GetRoot() string {
 	if m != nil {
-		return m.Master
+		return m.Root
 	}
 	return ""
 }
@@ -508,9 +508,9 @@ func (m *ACLTokens) GetReplication() string {
 	return ""
 }
 
-func (m *ACLTokens) GetAgentMaster() string {
+func (m *ACLTokens) GetAgentRoot() string {
 	if m != nil {
-		return m.AgentMaster
+		return m.AgentRoot
 	}
 	return ""
 }
@@ -1178,10 +1178,10 @@ func (m *ACLTokens) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x22
 	}
-	if len(m.AgentMaster) > 0 {
-		i -= len(m.AgentMaster)
-		copy(dAtA[i:], m.AgentMaster)
-		i = encodeVarintConfig(dAtA, i, uint64(len(m.AgentMaster)))
+	if len(m.AgentRoot) > 0 {
+		i -= len(m.AgentRoot)
+		copy(dAtA[i:], m.AgentRoot)
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.AgentRoot)))
 		i--
 		dAtA[i] = 0x1a
 	}
@@ -1192,10 +1192,10 @@ func (m *ACLTokens) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.Master) > 0 {
-		i -= len(m.Master)
-		copy(dAtA[i:], m.Master)
-		i = encodeVarintConfig(dAtA, i, uint64(len(m.Master)))
+	if len(m.Root) > 0 {
+		i -= len(m.Root)
+		copy(dAtA[i:], m.Root)
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.Root)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -1494,7 +1494,7 @@ func (m *ACLTokens) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Master)
+	l = len(m.Root)
 	if l > 0 {
 		n += 1 + l + sovConfig(uint64(l))
 	}
@@ -1502,7 +1502,7 @@ func (m *ACLTokens) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovConfig(uint64(l))
 	}
-	l = len(m.AgentMaster)
+	l = len(m.AgentRoot)
 	if l > 0 {
 		n += 1 + l + sovConfig(uint64(l))
 	}
@@ -2727,7 +2727,7 @@ func (m *ACLTokens) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Master", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Root", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2755,7 +2755,7 @@ func (m *ACLTokens) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Master = string(dAtA[iNdEx:postIndex])
+			m.Root = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -2791,7 +2791,7 @@ func (m *ACLTokens) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AgentMaster", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field AgentRoot", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2819,7 +2819,7 @@ func (m *ACLTokens) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.AgentMaster = string(dAtA[iNdEx:postIndex])
+			m.AgentRoot = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {

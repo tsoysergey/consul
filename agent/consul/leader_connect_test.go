@@ -203,7 +203,7 @@ func TestLeader_SecondaryCA_Initialize(t *testing.T) {
 				c.ACLDatacenter = "primary"
 				c.Build = "1.6.0"
 				c.ACLsEnabled = true
-				c.ACLMasterToken = masterToken
+				c.ACLRootToken = masterToken
 				c.ACLDefaultPolicy = "deny"
 				c.CAConfig.Config["PrivateKeyType"] = tc.keyType
 				c.CAConfig.Config["PrivateKeyBits"] = tc.keyBits
