@@ -215,7 +215,7 @@ func TestAgent_TokenStore(t *testing.T) {
 	a := NewTestAgent(t, `
 		acl_token = "user"
 		acl_agent_token = "agent"
-		acl_agent_master_token = "master"`,
+		acl_agent_root_token = "root"`,
 	)
 	defer a.Shutdown()
 
@@ -225,7 +225,7 @@ func TestAgent_TokenStore(t *testing.T) {
 	if got, want := a.tokens.AgentToken(), "agent"; got != want {
 		t.Fatalf("got %q want %q", got, want)
 	}
-	if got, want := a.tokens.IsAgentRootToken("master"), true; got != want {
+	if got, want := a.tokens.IsAgentRootToken("root"), true; got != want {
 		t.Fatalf("got %v want %v", got, want)
 	}
 }

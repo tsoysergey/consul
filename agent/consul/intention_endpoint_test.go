@@ -1693,7 +1693,7 @@ func TestIntentionList_acl(t *testing.T) {
 	})
 
 	// Test with management token
-	t.Run("master-token", func(t *testing.T) {
+	t.Run("root-token", func(t *testing.T) {
 		req := &structs.IntentionListRequest{
 			Datacenter:   "dc1",
 			QueryOptions: structs.QueryOptions{Token: TestDefaultRootToken},

@@ -455,9 +455,9 @@ func TestACLConfig() string {
 	return `
 		acl_datacenter = "dc1"
 		acl_default_policy = "deny"
-		acl_master_token = "root"
+		acl_root_token = "root"
 		acl_agent_token = "root"
-		acl_agent_master_token = "towel"
+		acl_agent_root_token = "towel"
 	`
 }
 
@@ -518,13 +518,13 @@ var aclConfigTpl = template.Must(template.New("ACL Config").Parse(`
 		{{- if .HasConfiguredTokens}}
 		tokens {
 			{{- if ne .RootToken ""}}
-			master = "{{ .RootToken }}"
+			root = "{{ .RootToken }}"
 			{{- end}}
 			{{- if ne .AgentToken ""}}
 			agent = "{{ .AgentToken }}"
 			{{- end}}
 			{{- if ne .AgentRootToken "" }}
-			agent_master = "{{ .AgentRootToken }}"
+			agent_root = "{{ .AgentRootToken }}"
 			{{- end}}
 			{{- if ne .DefaultToken "" }}
 			default = "{{ .DefaultToken }}"

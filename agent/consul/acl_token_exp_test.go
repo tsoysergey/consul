@@ -57,7 +57,7 @@ func testACLTokenReap_Primary(t *testing.T, local, global bool) {
 
 	acl := ACL{srv: s1}
 
-	masterTokenAccessorID, err := retrieveTestTokenAccessorForSecret(codec, "root", "dc1", "root")
+	rootTokenAccessorID, err := retrieveTestTokenAccessorForSecret(codec, "root", "dc1", "root")
 	require.NoError(t, err)
 
 	listTokens := func() (localTokens, globalTokens []string, err error) {
@@ -87,9 +87,9 @@ func testACLTokenReap_Primary(t *testing.T, local, global bool) {
 		t.Helper()
 
 		var expectLocal, expectGlobal []string
-		// The master token and the anonymous token are always going to be
+		// The root token and the anonymous token are always going to be
 		// present and global.
-		expectGlobal = append(expectGlobal, masterTokenAccessorID)
+		expectGlobal = append(expectGlobal, rootTokenAccessorID)
 		expectGlobal = append(expectGlobal, structs.ACLTokenAnonymousID)
 
 		if local {

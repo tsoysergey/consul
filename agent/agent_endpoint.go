@@ -1329,7 +1329,7 @@ func (s *HTTPHandlers) AgentToken(resp http.ResponseWriter, req *http.Request) (
 				triggerAntiEntropySync = true
 			}
 
-		case "acl_agent_master_token", "agent_master":
+		case "acl_agent_root_token", "agent_root":
 			s.agent.tokens.UpdateAgentRootToken(args.Token, token_store.TokenSourceAPI)
 
 		case "acl_replication_token", "replication":

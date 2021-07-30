@@ -1816,7 +1816,7 @@ func NewAgentRootTokenIdentity(agent string, secretID string) *AgentRootTokenIde
 }
 
 func (id *AgentRootTokenIdentity) ID() string {
-	return fmt.Sprintf("agent-master:%s", id.agent)
+	return fmt.Sprintf("agent-root:%s", id.agent)
 }
 
 func (id *AgentRootTokenIdentity) SecretToken() string {

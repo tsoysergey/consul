@@ -532,7 +532,7 @@ func TestFederationState_List_ACLDeny(t *testing.T) {
 			token:       opReadToken.SecretID,
 			gwListEmpty: true,
 		},
-		"master token": {
+		"root token": {
 			token: "root",
 		},
 	}

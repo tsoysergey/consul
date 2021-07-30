@@ -238,7 +238,7 @@ func TestPreparedQuery_Apply_ACLDeny(t *testing.T) {
 		Datacenter: "dc1",
 		Op:         structs.PreparedQueryCreate,
 		Query: &structs.PreparedQuery{
-			Name: "redis-master",
+			Name: "redis-primary",
 			Service: structs.ServiceQuery{
 				Service: "the-redis",
 			},
@@ -519,7 +519,7 @@ func TestPreparedQuery_Apply_ForwardLeader(t *testing.T) {
 			Address:    "127.0.0.1",
 			Service: &structs.NodeService{
 				Service: "redis",
-				Tags:    []string{"master"},
+				Tags:    []string{"primary"},
 				Port:    8000,
 			},
 		}
@@ -903,7 +903,7 @@ func TestPreparedQuery_Get(t *testing.T) {
 		Datacenter: "dc1",
 		Op:         structs.PreparedQueryCreate,
 		Query: &structs.PreparedQuery{
-			Name: "redis-master",
+			Name: "redis-primary",
 			Service: structs.ServiceQuery{
 				Service: "the-redis",
 			},
@@ -1177,7 +1177,7 @@ func TestPreparedQuery_List(t *testing.T) {
 		Datacenter: "dc1",
 		Op:         structs.PreparedQueryCreate,
 		Query: &structs.PreparedQuery{
-			Name:  "redis-master",
+			Name:  "redis-primary",
 			Token: "le-token",
 			Service: structs.ServiceQuery{
 				Service: "the-redis",
@@ -2431,7 +2431,7 @@ func TestPreparedQuery_Execute_ForwardLeader(t *testing.T) {
 			Address:    "127.0.0.1",
 			Service: &structs.NodeService{
 				Service: "redis",
-				Tags:    []string{"master"},
+				Tags:    []string{"primary"},
 				Port:    8000,
 			},
 		}

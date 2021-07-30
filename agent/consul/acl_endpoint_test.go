@@ -399,9 +399,9 @@ func TestACLEndpoint_GetPolicy_Management(t *testing.T) {
 	_, srv, codec := testACLServerWithConfig(t, nil, false)
 
 	// wait for leader election and leader establishment to finish.
-	// after this the global management policy, master token and
+	// after this the global management policy, root token and
 	// anonymous token will have been injected into the state store
-	// and we will be ready to resolve the master token
+	// and we will be ready to resolve the root token
 	waitForLeaderEstablishment(t, srv)
 
 	req := structs.ACLPolicyResolveLegacyRequest{
@@ -449,7 +449,7 @@ func TestACLEndpoint_List(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEqual(t, uint64(0), acls.Index)
 
-	// 5  + master
+	// 5  + root
 	require.Len(t, acls.ACLs, 6)
 	var actualIDs []string
 	for i := 0; i < len(acls.ACLs); i++ {
@@ -2012,7 +2012,7 @@ func TestACLEndpoint_TokenList(t *testing.T) {
 	t2, err := upsertTestToken(codec, TestDefaultRootToken, "dc1", nil)
 	require.NoError(t, err)
 
-	masterTokenAccessorID, err := retrieveTestTokenAccessorForSecret(codec, TestDefaultRootToken, "dc1", TestDefaultRootToken)
+	rootTokenAccessorID, err := retrieveTestTokenAccessorForSecret(codec, TestDefaultRootToken, "dc1", TestDefaultRootToken)
 	require.NoError(t, err)
 
 	t.Run("normal", func(t *testing.T) {
@@ -2036,7 +2036,7 @@ func TestACLEndpoint_TokenList(t *testing.T) {
 		require.NoError(t, err)
 
 		tokens := []string{
-			masterTokenAccessorID,
+			rootTokenAccessorID,
 			structs.ACLTokenAnonymousID,
 			t1.AccessorID,
 			t2.AccessorID,
@@ -2059,7 +2059,7 @@ func TestACLEndpoint_TokenList(t *testing.T) {
 		require.NoError(t, err)
 
 		tokens := []string{
-			masterTokenAccessorID,
+			rootTokenAccessorID,
 			structs.ACLTokenAnonymousID,
 			t1.AccessorID,
 			t2.AccessorID,
@@ -2085,7 +2085,7 @@ func TestACLEndpoint_TokenList(t *testing.T) {
 		require.NoError(t, err)
 
 		tokens := []string{
-			masterTokenAccessorID,
+			rootTokenAccessorID,
 			structs.ACLTokenAnonymousID,
 			readOnlyToken.AccessorID,
 			t1.AccessorID,
@@ -5671,7 +5671,7 @@ func TestValidateBindingRuleBindName(t *testing.T) {
 }
 
 // upsertTestToken creates a token for testing purposes
-func upsertTestToken(codec rpc.ClientCodec, masterToken string, datacenter string,
+func upsertTestToken(codec rpc.ClientCodec, rootToken string, datacenter string,
 	tokenModificationFn func(token *structs.ACLToken)) (*structs.ACLToken, error) {
 	arg := structs.ACLTokenSetRequest{
 		Datacenter: datacenter,
@@ -5680,7 +5680,7 @@ func upsertTestToken(codec rpc.ClientCodec, masterToken string, datacenter strin
 			Local:       false,
 			Policies:    nil,
 		},
-		WriteRequest: structs.WriteRequest{Token: masterToken},
+		WriteRequest: structs.WriteRequest{Token: rootToken},
 	}
 
 	if tokenModificationFn != nil {
@@ -5702,13 +5702,13 @@ func upsertTestToken(codec rpc.ClientCodec, masterToken string, datacenter strin
 	return &out, nil
 }
 
-func upsertTestTokenWithPolicyRules(codec rpc.ClientCodec, masterToken string, datacenter string, rules string) (*structs.ACLToken, error) {
-	policy, err := upsertTestPolicyWithRules(codec, masterToken, datacenter, rules)
+func upsertTestTokenWithPolicyRules(codec rpc.ClientCodec, rootToken string, datacenter string, rules string) (*structs.ACLToken, error) {
+	policy, err := upsertTestPolicyWithRules(codec, rootToken, datacenter, rules)
 	if err != nil {
 		return nil, err
 	}
 
-	token, err := upsertTestToken(codec, masterToken, datacenter, func(token *structs.ACLToken) {
+	token, err := upsertTestToken(codec, rootToken, datacenter, func(token *structs.ACLToken) {
 		token.Policies = []structs.ACLTokenPolicyLink{{ID: policy.ID}}
 	})
 	if err != nil {
@@ -5718,12 +5718,12 @@ func upsertTestTokenWithPolicyRules(codec rpc.ClientCodec, masterToken string, d
 	return token, nil
 }
 
-func retrieveTestTokenAccessorForSecret(codec rpc.ClientCodec, masterToken string, datacenter string, id string) (string, error) {
+func retrieveTestTokenAccessorForSecret(codec rpc.ClientCodec, rootToken string, datacenter string, id string) (string, error) {
 	arg := structs.ACLTokenGetRequest{
 		TokenID:      id,
 		TokenIDType:  structs.ACLTokenSecret,
 		Datacenter:   datacenter,
-		QueryOptions: structs.QueryOptions{Token: masterToken},
+		QueryOptions: structs.QueryOptions{Token: rootToken},
 	}
 
 	var out structs.ACLTokenResponse
@@ -5742,12 +5742,12 @@ func retrieveTestTokenAccessorForSecret(codec rpc.ClientCodec, masterToken strin
 }
 
 // retrieveTestToken returns a policy for testing purposes
-func retrieveTestToken(codec rpc.ClientCodec, masterToken string, datacenter string, id string) (*structs.ACLTokenResponse, error) {
+func retrieveTestToken(codec rpc.ClientCodec, rootToken string, datacenter string, id string) (*structs.ACLTokenResponse, error) {
 	arg := structs.ACLTokenGetRequest{
 		Datacenter:   datacenter,
 		TokenID:      id,
 		TokenIDType:  structs.ACLTokenAccessor,
-		QueryOptions: structs.QueryOptions{Token: masterToken},
+		QueryOptions: structs.QueryOptions{Token: rootToken},
 	}
 
 	var out structs.ACLTokenResponse
@@ -5761,11 +5761,11 @@ func retrieveTestToken(codec rpc.ClientCodec, masterToken string, datacenter str
 	return &out, nil
 }
 
-func deleteTestToken(codec rpc.ClientCodec, masterToken string, datacenter string, tokenAccessor string) error {
+func deleteTestToken(codec rpc.ClientCodec, rootToken string, datacenter string, tokenAccessor string) error {
 	arg := structs.ACLTokenDeleteRequest{
 		Datacenter:   datacenter,
 		TokenID:      tokenAccessor,
-		WriteRequest: structs.WriteRequest{Token: masterToken},
+		WriteRequest: structs.WriteRequest{Token: rootToken},
 	}
 
 	var ignored string
@@ -5773,11 +5773,11 @@ func deleteTestToken(codec rpc.ClientCodec, masterToken string, datacenter strin
 	return err
 }
 
-func deleteTestPolicy(codec rpc.ClientCodec, masterToken string, datacenter string, policyID string) error {
+func deleteTestPolicy(codec rpc.ClientCodec, rootToken string, datacenter string, policyID string) error {
 	arg := structs.ACLPolicyDeleteRequest{
 		Datacenter:   datacenter,
 		PolicyID:     policyID,
-		WriteRequest: structs.WriteRequest{Token: masterToken},
+		WriteRequest: structs.WriteRequest{Token: rootToken},
 	}
 
 	var ignored string
@@ -5785,7 +5785,7 @@ func deleteTestPolicy(codec rpc.ClientCodec, masterToken string, datacenter stri
 	return err
 }
 
-func upsertTestCustomizedPolicy(codec rpc.ClientCodec, masterToken string, datacenter string, policyModificationFn func(policy *structs.ACLPolicy)) (*structs.ACLPolicy, error) {
+func upsertTestCustomizedPolicy(codec rpc.ClientCodec, rootToken string, datacenter string, policyModificationFn func(policy *structs.ACLPolicy)) (*structs.ACLPolicy, error) {
 	// Make sure test policies can't collide
 	policyUnq, err := uuid.GenerateUUID()
 	if err != nil {
@@ -5797,7 +5797,7 @@ func upsertTestCustomizedPolicy(codec rpc.ClientCodec, masterToken string, datac
 		Policy: structs.ACLPolicy{
 			Name: fmt.Sprintf("test-policy-%s", policyUnq),
 		},
-		WriteRequest: structs.WriteRequest{Token: masterToken},
+		WriteRequest: structs.WriteRequest{Token: rootToken},
 	}
 
 	if policyModificationFn != nil {
@@ -5820,22 +5820,22 @@ func upsertTestCustomizedPolicy(codec rpc.ClientCodec, masterToken string, datac
 }
 
 // upsertTestPolicy creates a policy for testing purposes
-func upsertTestPolicy(codec rpc.ClientCodec, masterToken string, datacenter string) (*structs.ACLPolicy, error) {
-	return upsertTestPolicyWithRules(codec, masterToken, datacenter, "")
+func upsertTestPolicy(codec rpc.ClientCodec, rootToken string, datacenter string) (*structs.ACLPolicy, error) {
+	return upsertTestPolicyWithRules(codec, rootToken, datacenter, "")
 }
 
-func upsertTestPolicyWithRules(codec rpc.ClientCodec, masterToken string, datacenter string, rules string) (*structs.ACLPolicy, error) {
-	return upsertTestCustomizedPolicy(codec, masterToken, datacenter, func(policy *structs.ACLPolicy) {
+func upsertTestPolicyWithRules(codec rpc.ClientCodec, rootToken string, datacenter string, rules string) (*structs.ACLPolicy, error) {
+	return upsertTestCustomizedPolicy(codec, rootToken, datacenter, func(policy *structs.ACLPolicy) {
 		policy.Rules = rules
 	})
 }
 
 // retrieveTestPolicy returns a policy for testing purposes
-func retrieveTestPolicy(codec rpc.ClientCodec, masterToken string, datacenter string, id string) (*structs.ACLPolicyResponse, error) {
+func retrieveTestPolicy(codec rpc.ClientCodec, rootToken string, datacenter string, id string) (*structs.ACLPolicyResponse, error) {
 	arg := structs.ACLPolicyGetRequest{
 		Datacenter:   datacenter,
 		PolicyID:     id,
-		QueryOptions: structs.QueryOptions{Token: masterToken},
+		QueryOptions: structs.QueryOptions{Token: rootToken},
 	}
 
 	var out structs.ACLPolicyResponse
@@ -5849,11 +5849,11 @@ func retrieveTestPolicy(codec rpc.ClientCodec, masterToken string, datacenter st
 	return &out, nil
 }
 
-func deleteTestRole(codec rpc.ClientCodec, masterToken string, datacenter string, roleID string) error {
+func deleteTestRole(codec rpc.ClientCodec, rootToken string, datacenter string, roleID string) error {
 	arg := structs.ACLRoleDeleteRequest{
 		Datacenter:   datacenter,
 		RoleID:       roleID,
-		WriteRequest: structs.WriteRequest{Token: masterToken},
+		WriteRequest: structs.WriteRequest{Token: rootToken},
 	}
 
 	var ignored string
@@ -5861,8 +5861,8 @@ func deleteTestRole(codec rpc.ClientCodec, masterToken string, datacenter string
 	return err
 }
 
-func deleteTestRoleByName(codec rpc.ClientCodec, masterToken string, datacenter string, roleName string) error {
-	resp, err := retrieveTestRoleByName(codec, masterToken, datacenter, roleName)
+func deleteTestRoleByName(codec rpc.ClientCodec, rootToken string, datacenter string, roleName string) error {
+	resp, err := retrieveTestRoleByName(codec, rootToken, datacenter, roleName)
 	if err != nil {
 		return err
 	}
@@ -5870,15 +5870,15 @@ func deleteTestRoleByName(codec rpc.ClientCodec, masterToken string, datacenter 
 		return nil
 	}
 
-	return deleteTestRole(codec, masterToken, datacenter, resp.Role.ID)
+	return deleteTestRole(codec, rootToken, datacenter, resp.Role.ID)
 }
 
 // upsertTestRole creates a role for testing purposes
-func upsertTestRole(codec rpc.ClientCodec, masterToken string, datacenter string) (*structs.ACLRole, error) {
-	return upsertTestCustomizedRole(codec, masterToken, datacenter, nil)
+func upsertTestRole(codec rpc.ClientCodec, rootToken string, datacenter string) (*structs.ACLRole, error) {
+	return upsertTestCustomizedRole(codec, rootToken, datacenter, nil)
 }
 
-func upsertTestCustomizedRole(codec rpc.ClientCodec, masterToken string, datacenter string, modify func(role *structs.ACLRole)) (*structs.ACLRole, error) {
+func upsertTestCustomizedRole(codec rpc.ClientCodec, rootToken string, datacenter string, modify func(role *structs.ACLRole)) (*structs.ACLRole, error) {
 	// Make sure test roles can't collide
 	roleUnq, err := uuid.GenerateUUID()
 	if err != nil {
@@ -5890,7 +5890,7 @@ func upsertTestCustomizedRole(codec rpc.ClientCodec, masterToken string, datacen
 		Role: structs.ACLRole{
 			Name: fmt.Sprintf("test-role-%s", roleUnq),
 		},
-		WriteRequest: structs.WriteRequest{Token: masterToken},
+		WriteRequest: structs.WriteRequest{Token: rootToken},
 	}
 
 	if modify != nil {
@@ -5912,11 +5912,11 @@ func upsertTestCustomizedRole(codec rpc.ClientCodec, masterToken string, datacen
 	return &out, nil
 }
 
-func retrieveTestRole(codec rpc.ClientCodec, masterToken string, datacenter string, id string) (*structs.ACLRoleResponse, error) {
+func retrieveTestRole(codec rpc.ClientCodec, rootToken string, datacenter string, id string) (*structs.ACLRoleResponse, error) {
 	arg := structs.ACLRoleGetRequest{
 		Datacenter:   datacenter,
 		RoleID:       id,
-		QueryOptions: structs.QueryOptions{Token: masterToken},
+		QueryOptions: structs.QueryOptions{Token: rootToken},
 	}
 
 	var out structs.ACLRoleResponse
@@ -5930,11 +5930,11 @@ func retrieveTestRole(codec rpc.ClientCodec, masterToken string, datacenter stri
 	return &out, nil
 }
 
-func retrieveTestRoleByName(codec rpc.ClientCodec, masterToken string, datacenter string, name string) (*structs.ACLRoleResponse, error) {
+func retrieveTestRoleByName(codec rpc.ClientCodec, rootToken string, datacenter string, name string) (*structs.ACLRoleResponse, error) {
 	arg := structs.ACLRoleGetRequest{
 		Datacenter:   datacenter,
 		RoleName:     name,
-		QueryOptions: structs.QueryOptions{Token: masterToken},
+		QueryOptions: structs.QueryOptions{Token: rootToken},
 	}
 
 	var out structs.ACLRoleResponse
@@ -5948,11 +5948,11 @@ func retrieveTestRoleByName(codec rpc.ClientCodec, masterToken string, datacente
 	return &out, nil
 }
 
-func deleteTestAuthMethod(codec rpc.ClientCodec, masterToken string, datacenter string, methodName string) error {
+func deleteTestAuthMethod(codec rpc.ClientCodec, rootToken string, datacenter string, methodName string) error {
 	arg := structs.ACLAuthMethodDeleteRequest{
 		Datacenter:     datacenter,
 		AuthMethodName: methodName,
-		WriteRequest:   structs.WriteRequest{Token: masterToken},
+		WriteRequest:   structs.WriteRequest{Token: rootToken},
 	}
 
 	var ignored string
@@ -5960,10 +5960,10 @@ func deleteTestAuthMethod(codec rpc.ClientCodec, masterToken string, datacenter 
 	return err
 }
 func upsertTestAuthMethod(
-	codec rpc.ClientCodec, masterToken string, datacenter string,
+	codec rpc.ClientCodec, rootToken string, datacenter string,
 	sessionID string,
 ) (*structs.ACLAuthMethod, error) {
-	return upsertTestCustomizedAuthMethod(codec, masterToken, datacenter, func(method *structs.ACLAuthMethod) {
+	return upsertTestCustomizedAuthMethod(codec, rootToken, datacenter, func(method *structs.ACLAuthMethod) {
 		method.Config = map[string]interface{}{
 			"SessionID": sessionID,
 		}
@@ -5971,7 +5971,7 @@ func upsertTestAuthMethod(
 }
 
 func upsertTestCustomizedAuthMethod(
-	codec rpc.ClientCodec, masterToken string, datacenter string,
+	codec rpc.ClientCodec, rootToken string, datacenter string,
 	modify func(method *structs.ACLAuthMethod),
 ) (*structs.ACLAuthMethod, error) {
 	name, err := uuid.GenerateUUID()
@@ -5985,7 +5985,7 @@ func upsertTestCustomizedAuthMethod(
 			Name: "test-method-" + name,
 			Type: "testing",
 		},
-		WriteRequest: structs.WriteRequest{Token: masterToken},
+		WriteRequest: structs.WriteRequest{Token: rootToken},
 	}
 
 	if modify != nil {
@@ -6003,7 +6003,7 @@ func upsertTestCustomizedAuthMethod(
 }
 
 func upsertTestKubernetesAuthMethod(
-	codec rpc.ClientCodec, masterToken string, datacenter string,
+	codec rpc.ClientCodec, rootToken string, datacenter string,
 	caCert, kubeHost, kubeJWT string,
 ) (*structs.ACLAuthMethod, error) {
 	name, err := uuid.GenerateUUID()
@@ -6029,7 +6029,7 @@ func upsertTestKubernetesAuthMethod(
 				"ServiceAccountJWT": kubeJWT,
 			},
 		},
-		WriteRequest: structs.WriteRequest{Token: masterToken},
+		WriteRequest: structs.WriteRequest{Token: rootToken},
 	}
 
 	var out structs.ACLAuthMethod
@@ -6042,11 +6042,11 @@ func upsertTestKubernetesAuthMethod(
 	return &out, nil
 }
 
-func retrieveTestAuthMethod(codec rpc.ClientCodec, masterToken string, datacenter string, name string) (*structs.ACLAuthMethodResponse, error) {
+func retrieveTestAuthMethod(codec rpc.ClientCodec, rootToken string, datacenter string, name string) (*structs.ACLAuthMethodResponse, error) {
 	arg := structs.ACLAuthMethodGetRequest{
 		Datacenter:     datacenter,
 		AuthMethodName: name,
-		QueryOptions:   structs.QueryOptions{Token: masterToken},
+		QueryOptions:   structs.QueryOptions{Token: rootToken},
 	}
 
 	var out structs.ACLAuthMethodResponse
@@ -6060,11 +6060,11 @@ func retrieveTestAuthMethod(codec rpc.ClientCodec, masterToken string, datacente
 	return &out, nil
 }
 
-func deleteTestBindingRule(codec rpc.ClientCodec, masterToken string, datacenter string, ruleID string) error {
+func deleteTestBindingRule(codec rpc.ClientCodec, rootToken string, datacenter string, ruleID string) error {
 	arg := structs.ACLBindingRuleDeleteRequest{
 		Datacenter:    datacenter,
 		BindingRuleID: ruleID,
-		WriteRequest:  structs.WriteRequest{Token: masterToken},
+		WriteRequest:  structs.WriteRequest{Token: rootToken},
 	}
 
 	var ignored string
@@ -6074,14 +6074,14 @@ func deleteTestBindingRule(codec rpc.ClientCodec, masterToken string, datacenter
 
 func upsertTestBindingRule(
 	codec rpc.ClientCodec,
-	masterToken string,
+	rootToken string,
 	datacenter string,
 	methodName string,
 	selector string,
 	bindType string,
 	bindName string,
 ) (*structs.ACLBindingRule, error) {
-	return upsertTestCustomizedBindingRule(codec, masterToken, datacenter, func(rule *structs.ACLBindingRule) {
+	return upsertTestCustomizedBindingRule(codec, rootToken, datacenter, func(rule *structs.ACLBindingRule) {
 		rule.AuthMethod = methodName
 		rule.BindType = bindType
 		rule.BindName = bindName
@@ -6089,11 +6089,11 @@ func upsertTestBindingRule(
 	})
 }
 
-func upsertTestCustomizedBindingRule(codec rpc.ClientCodec, masterToken string, datacenter string, modify func(rule *structs.ACLBindingRule)) (*structs.ACLBindingRule, error) {
+func upsertTestCustomizedBindingRule(codec rpc.ClientCodec, rootToken string, datacenter string, modify func(rule *structs.ACLBindingRule)) (*structs.ACLBindingRule, error) {
 	req := structs.ACLBindingRuleSetRequest{
 		Datacenter:   datacenter,
 		BindingRule:  structs.ACLBindingRule{},
-		WriteRequest: structs.WriteRequest{Token: masterToken},
+		WriteRequest: structs.WriteRequest{Token: rootToken},
 	}
 
 	if modify != nil {
@@ -6110,11 +6110,11 @@ func upsertTestCustomizedBindingRule(codec rpc.ClientCodec, masterToken string, 
 	return &out, nil
 }
 
-func retrieveTestBindingRule(codec rpc.ClientCodec, masterToken string, datacenter string, ruleID string) (*structs.ACLBindingRuleResponse, error) {
+func retrieveTestBindingRule(codec rpc.ClientCodec, rootToken string, datacenter string, ruleID string) (*structs.ACLBindingRuleResponse, error) {
 	arg := structs.ACLBindingRuleGetRequest{
 		Datacenter:    datacenter,
 		BindingRuleID: ruleID,
-		QueryOptions:  structs.QueryOptions{Token: masterToken},
+		QueryOptions:  structs.QueryOptions{Token: rootToken},
 	}
 
 	var out structs.ACLBindingRuleResponse
