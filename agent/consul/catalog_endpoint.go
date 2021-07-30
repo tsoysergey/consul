@@ -551,7 +551,8 @@ func (c *Catalog) ListServices(args *structs.DCSpecificRequest, reply *structs.I
 				return nil
 			}
 
-			return c.srv.filterACLWithAuthorizer(authz, reply)
+			c.srv.filterACLWithAuthorizer(authz, reply)
+			return nil
 		})
 }
 
@@ -579,7 +580,8 @@ func (c *Catalog) ServiceList(args *structs.DCSpecificRequest, reply *structs.In
 			}
 
 			reply.Index, reply.Services = index, services
-			return c.srv.filterACLWithAuthorizer(authz, reply)
+			c.srv.filterACLWithAuthorizer(authz, reply)
+			return nil
 		})
 }
 

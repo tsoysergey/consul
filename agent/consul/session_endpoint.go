@@ -201,9 +201,7 @@ func (s *Session) Get(args *structs.SessionSpecificRequest,
 			} else {
 				reply.Sessions = nil
 			}
-			if err := s.srv.filterACLWithAuthorizer(authz, reply); err != nil {
-				return err
-			}
+			s.srv.filterACLWithAuthorizer(authz, reply)
 			return nil
 		})
 }
@@ -235,9 +233,7 @@ func (s *Session) List(args *structs.SessionSpecificRequest,
 			}
 
 			reply.Index, reply.Sessions = index, sessions
-			if err := s.srv.filterACLWithAuthorizer(authz, reply); err != nil {
-				return err
-			}
+			s.srv.filterACLWithAuthorizer(authz, reply)
 			return nil
 		})
 }
@@ -269,9 +265,7 @@ func (s *Session) NodeSessions(args *structs.NodeSpecificRequest,
 			}
 
 			reply.Index, reply.Sessions = index, sessions
-			if err := s.srv.filterACLWithAuthorizer(authz, reply); err != nil {
-				return err
-			}
+			s.srv.filterACLWithAuthorizer(authz, reply)
 			return nil
 		})
 }
