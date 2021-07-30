@@ -85,7 +85,7 @@ type TestServerConfig struct {
 	Addresses           *TestAddressConfig     `json:"addresses,omitempty"`
 	Ports               *TestPortConfig        `json:"ports,omitempty"`
 	RaftProtocol        int                    `json:"raft_protocol,omitempty"`
-	ACLRootToken      string                 `json:"acl_root_token,omitempty"`
+	ACLRootToken        string                 `json:"acl_root_token,omitempty"`
 	ACLDatacenter       string                 `json:"acl_datacenter,omitempty"`
 	PrimaryDatacenter   string                 `json:"primary_datacenter,omitempty"`
 	ACLDefaultPolicy    string                 `json:"acl_default_policy,omitempty"`
@@ -121,9 +121,9 @@ type TestACLs struct {
 }
 
 type TestTokens struct {
-	Root      string `json:"root,omitempty"`
+	Root        string `json:"root,omitempty"`
 	Replication string `json:"replication,omitempty"`
-	AgentRoot string `json:"agent_root,omitempty"`
+	AgentRoot   string `json:"agent_root,omitempty"`
 	Default     string `json:"default,omitempty"`
 	Agent       string `json:"agent,omitempty"`
 }

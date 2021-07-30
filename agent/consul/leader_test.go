@@ -1180,7 +1180,7 @@ func TestLeader_ACL_Initialization(t *testing.T) {
 	tests := []struct {
 		name      string
 		build     string
-		root    string
+		root      string
 		bootstrap bool
 	}{
 		{"old version, no root", "0.8.0", "", true},

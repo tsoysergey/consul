@@ -8,14 +8,14 @@ import (
 
 func TestStore_RegularTokens(t *testing.T) {
 	type tokens struct {
-		userSource   TokenSource
-		user         string
-		agent        string
-		agentSource  TokenSource
-		root         string
-		rootSource TokenSource
-		repl         string
-		replSource   TokenSource
+		userSource  TokenSource
+		user        string
+		agent       string
+		agentSource TokenSource
+		root        string
+		rootSource  TokenSource
+		repl        string
+		replSource  TokenSource
 	}
 
 	tests := []struct {

@@ -5173,14 +5173,14 @@ func TestAgent_Token(t *testing.T) {
 	testrpc.WaitForLeader(t, a.RPC, "dc1")
 
 	type tokens struct {
-		user         string
-		userSource   tokenStore.TokenSource
-		agent        string
-		agentSource  tokenStore.TokenSource
-		root       string
-		rootSource tokenStore.TokenSource
-		repl         string
-		replSource   tokenStore.TokenSource
+		user        string
+		userSource  tokenStore.TokenSource
+		agent       string
+		agentSource tokenStore.TokenSource
+		root        string
+		rootSource  tokenStore.TokenSource
+		repl        string
+		replSource  tokenStore.TokenSource
 	}
 
 	resetTokens := func(init tokens) {
