@@ -1493,7 +1493,7 @@ func TestAPI_AgentUpdateToken(t *testing.T) {
 			switch req.URL.Path {
 			case "/v1/agent/token/default",
 				"/v1/agent/token/agent",
-				"/v1/agent/token/agent_master",
+				"/v1/agent/token/agent_root",
 				"/v1/agent/token/replication":
 				req.URL.Host = notfound.URL[7:] // Strip off "http://".
 			default:
