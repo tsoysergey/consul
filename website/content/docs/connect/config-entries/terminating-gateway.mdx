@@ -460,6 +460,8 @@ Override the SNI and CA file used for connections to the billing service:
 
 <CodeTabs>
 
+<CodeBlockConfig highlight="13-18">
+
 ```hcl
 Kind = "terminating-gateway"
 Name = "us-west-gateway"
@@ -482,6 +484,10 @@ Services = [
 ]
 ```
 
+</CodeBlockConfig>
+
+<CodeBlockConfig highlight="12-15">
+
 ```yaml
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: TerminatingGateway
@@ -499,6 +505,10 @@ spec:
       caFile: /etc/billing-ca/ca-chain.cert.pem
       sni: billing.service.com
 ```
+
+</CodeBlockConfig>
+
+<CodeBlockConfig highlight="13-18">
 
 ```json
 {
@@ -522,6 +532,8 @@ spec:
   ]
 }
 ```
+
+</CodeBlockConfig>
 
 </CodeTabs>
 
