@@ -20,10 +20,10 @@ one global entry is supported.
 
 ### Default protocol
 
+Set the default protocol for all sidecar proxies:
+
 <Tabs>
 <Tab heading="Consul OSS">
-
-Set the default protocol for all sidecar proxies:
 
 <CodeTabs>
 
@@ -40,7 +40,6 @@ apiVersion: consul.hashicorp.com/v1alpha1
 kind: ProxyDefaults
 metadata:
   name: global
-  namespace: default
 spec:
   config:
     protocol: http
@@ -61,8 +60,6 @@ spec:
 </Tab>
 <Tab heading="Consul Enterprise">
 
-Set the default protocol for all sidecar proxies.
-
 -> **NOTE:** The `proxy-defaults` config entry can only be created in the `default`
 namespace and it will configure proxies in **all** namespaces.
 
@@ -82,6 +79,7 @@ apiVersion: consul.hashicorp.com/v1alpha1
 kind: ProxyDefaults
 metadata:
   name: global
+  namespace: default
 spec:
   config:
     protocol: http
